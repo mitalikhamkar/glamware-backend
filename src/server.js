@@ -5,18 +5,21 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import clothingRoutes from "./routes/clothingRoutes.js";
 import wardrobeRoutes from "./routes/wardrobe.js";
-app.use("/api/wardrobe", wardrobeRoutes);
+
 dotenv.config();
 
-const app = express();
+const app = express(); // ✅ create app FIRST
 
 // ✅ middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 // ✅ routes
 app.use("/api/auth", authRoutes);
 app.use("/api/clothing", clothingRoutes);
+app.use("/api/wardrobe", wardrobeRoutes); // ✅ now it's correct position
+
 // ✅ health check (VERY IMPORTANT FOR RENDER)
 app.get("/", (req, res) => {
   res.send("Glamware Backend Running");
