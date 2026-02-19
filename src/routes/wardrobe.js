@@ -1,7 +1,9 @@
-const express = require("express");
+import express from "express";
+import authMiddleware from "../middleware/auth.js";
+import Wardrobe from "../models/Wardrobe.js";
+
 const router = express.Router();
-const Wardrobe = require("../models/Wardrobe");
-const authMiddleware = require("../middleware/auth"); // make sure this exists
+
 
 // ➤ Add Clothing Item
 router.post("/", authMiddleware, async (req, res) => {
@@ -42,4 +44,5 @@ router.delete("/:id", authMiddleware, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
+

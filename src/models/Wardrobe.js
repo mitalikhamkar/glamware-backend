@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+
 
 const wardrobeSchema = new mongoose.Schema({
   userId: {
@@ -20,4 +21,5 @@ const wardrobeSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Wardrobe", wardrobeSchema);
+export default mongoose.model("Wardrobe", wardrobeSchema);
+

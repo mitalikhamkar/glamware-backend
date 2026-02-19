@@ -4,7 +4,7 @@ import express from "express";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import clothingRoutes from "./routes/clothingRoutes.js";
-const wardrobeRoutes = require("./routes/wardrobe");
+import wardrobeRoutes from "./routes/wardrobe.js";
 app.use("/api/wardrobe", wardrobeRoutes);
 dotenv.config();
 
