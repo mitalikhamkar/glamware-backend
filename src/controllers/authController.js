@@ -6,22 +6,26 @@ export const register = async (req, res) => {
   try {
     const { name, age, email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ message: "Missing fields" });
+    if (!name || !age || !email || !password) {
+      return res.status(400).json({
+        message: "All fields are required"
+      });
     }
 
-    const exists = await User.findOne({ email });
-    if (exists) {
-      return res.status(400).json({ message: "User already exists" });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        message: "Email already exists"
+      });
     }
 
-    const hashed = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
       name,
       age,
       email,
-      password: hashed,
+      password: hashedPassword
     });
 
     const token = jwt.sign(
@@ -30,15 +34,22 @@ export const register = async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    res.json({
+    res.status(201).json({
       token,
-      user,
+      user: {
+        _id: user._id,
+        name: user.name,
+        age: user.age,
+        email: user.email
+      }
     });
-  } catch (err) {
-  console.error("REGISTER ERROR:", err);
-  res.status(500).json({ message: "Server error" });
-}
+
+  } catch (error) {
+    console.error("Register error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 };
+
 
 export const login = async (req, res) => {
   try {
