@@ -1,3 +1,4 @@
+//clothingController
 import Clothing from "../models/Clothing.js";
 
 // CREATE clothing item

@@ -18,6 +18,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user"
+  },
   avatar: {
   gender: { type: String, default: null },
   skinColor: { type: String, default: null },
@@ -25,7 +30,7 @@ const userSchema = new mongoose.Schema({
   photoUrl: { type: String, default: null }
 }
   
-});
+}, { timestamps: true });
 
 
 export default mongoose.model("User", userSchema);

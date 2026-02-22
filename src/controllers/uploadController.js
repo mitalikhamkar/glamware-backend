@@ -1,3 +1,4 @@
+//uploadController
 export const uploadCloth = async (req, res) => {
   try {
     if (!req.file) {
