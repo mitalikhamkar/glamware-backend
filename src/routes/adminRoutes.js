@@ -101,4 +101,43 @@ router.delete("/feedback/:id", authMiddleware, adminMiddleware, async (req, res)
   await Feedback.findByIdAndDelete(req.params.id);
   res.json({ message: "Deleted" });
 });
+
+router.get("/stats", async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const totalFeedback = await Feedback.countDocuments();
+
+    const clothingCount = await Clothing.countDocuments();
+    const wardrobeCount = await Wardrobe.countDocuments();
+
+    const totalClothes = clothingCount + wardrobeCount;
+    user.lastLogin = new Date();
+await user.save();
+    res.json({
+      totalUsers,
+      totalFeedback,
+      totalClothes,
+      activeUsers: 0 // we fix this next
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.get("/all-clothes", async (req, res) => {
+  try {
+    const clothing = await Clothing.find().populate("userId", "name email");
+    const wardrobe = await Wardrobe.find().populate("userId", "name email");
+
+    res.json({
+      clothing,
+      wardrobe
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 export default router;

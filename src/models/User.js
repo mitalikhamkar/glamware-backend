@@ -28,6 +28,9 @@ const userSchema = new mongoose.Schema({
   skinColor: { type: String, default: null },
   bodyType: { type: String, default: null },
   photoUrl: { type: String, default: null }
+},
+lastLogin: {
+  type: Date
 }
   
 }, { timestamps: true });
