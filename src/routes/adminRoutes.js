@@ -36,21 +36,12 @@ router.delete("/clothes/:id", authMiddleware, adminMiddleware, async (req, res) 
 router.get("/wardrobe", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const items = await Wardrobe.find()
-      .populate("uploadedBy", "name email")
+      .populate("userId", "name email")
       .sort({ createdAt: -1 });
 
     res.json(items);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch wardrobe items" });
-  }
-});
-
-router.delete("/wardrobe/:id", authMiddleware, adminMiddleware, async (req, res) => {
-  try {
-    await Wardrobe.findByIdAndDelete(req.params.id);
-    res.json({ message: "Item deleted" });
-  } catch (error) {
-    res.status(500).json({ message: "Delete failed" });
   }
 });
 
@@ -71,22 +62,30 @@ router.put("/wardrobe/:id/status", authMiddleware, adminMiddleware, async (req, 
     res.status(500).json({ message: "Failed to update status" });
   }
 });
+
 router.get("/dashboard", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const totalUsers = await User.countDocuments();
-    const totalClothes = await Clothing.countDocuments();
-    const totalWardrobe = await Wardrobe.countDocuments();
     const totalFeedback = await Feedback.countDocuments();
 
-    const activeUsers = await User.countDocuments({ isActive: true });
+    const clothingCount = await Clothing.countDocuments();
+    const wardrobeCount = await Wardrobe.countDocuments();
+    const totalClothes = clothingCount + wardrobeCount;
+
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const activeUsers = await User.countDocuments({
+      lastLogin: { $gte: sevenDaysAgo }
+    });
 
     res.json({
       totalUsers,
       totalClothes,
-      totalWardrobe,
       totalFeedback,
-      activeUsers,
+      activeUsers
     });
+
   } catch (error) {
     res.status(500).json({ message: "Dashboard fetch failed" });
   }
@@ -100,29 +99,6 @@ router.get("/feedback", authMiddleware, adminMiddleware, async (req, res) => {
 router.delete("/feedback/:id", authMiddleware, adminMiddleware, async (req, res) => {
   await Feedback.findByIdAndDelete(req.params.id);
   res.json({ message: "Deleted" });
-});
-
-router.get("/stats", async (req, res) => {
-  try {
-    const totalUsers = await User.countDocuments();
-    const totalFeedback = await Feedback.countDocuments();
-
-    const clothingCount = await Clothing.countDocuments();
-    const wardrobeCount = await Wardrobe.countDocuments();
-
-    const totalClothes = clothingCount + wardrobeCount;
-    user.lastLogin = new Date();
-await user.save();
-    res.json({
-      totalUsers,
-      totalFeedback,
-      totalClothes,
-      activeUsers: 0 // we fix this next
-    });
-
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 });
 
 router.get("/all-clothes", async (req, res) => {
