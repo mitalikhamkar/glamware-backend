@@ -6,7 +6,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import clothingRoutes from "./routes/clothingRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes.js";
-import wardrobeRoutes from "./routes/wardrobe.js";
+import wardrobeRoutes from "./routes/wardrobeRoutes.js";
 
 dotenv.config();
 

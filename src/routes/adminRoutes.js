@@ -116,4 +116,18 @@ router.get("/all-clothes", async (req, res) => {
   }
 });
 
+router.get("/active-users", authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const activeUsers = await User.find({
+      lastLogin: { $gte: sevenDaysAgo }
+    }).select("-password");
+
+    res.json(activeUsers);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch active users" });
+  }
+});
 export default router;
