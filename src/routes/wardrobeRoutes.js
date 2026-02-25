@@ -42,5 +42,6 @@ router.post("/", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Wardrobe upload failed" });
   }
 });
+
 export default router;
 

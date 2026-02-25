@@ -1,25 +1,24 @@
-import mongoose from "mongoose";
+import express from "express";
+import {
+  createWardrobe,
+  getAllWardrobe
+} from "../controllers/wardrobeController.js";
+import authMiddleware from "../middleware/authMiddleware.js";
+import upload from "../middleware/multer.js";
 
+const router = express.Router();
 
-const wardrobeSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  imageUrl: {
-    type: String,
-    required: true,
-  },
-  category: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+router.post(
+  "/",
+  authMiddleware,
+  upload.single("image"),
+  createWardrobe
+);
 
-export default mongoose.model("Wardrobe", wardrobeSchema);
+router.get(
+  "/",
+  authMiddleware,
+  getAllWardrobe
+);
 
+export default router;
