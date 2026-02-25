@@ -1,4 +1,4 @@
-//server.js
+// server.js — FIXED: body size limit increased to handle base64 image payloads
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
@@ -11,30 +11,25 @@ import wardrobeRoutes from "./routes/wardrobeRoutes.js";
 
 dotenv.config();
 
-const app = express(); // ✅ create app FIRST
+const app = express();
 
-// ✅ middleware    
+// ✅ FIXED: raise body limit to 10 MB so base64 clothing images can be sent
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// ✅ routes
-app.use("/api/auth", authRoutes);
-app.use("/api/clothing", clothingRoutes);
-app.use("/api/wardrobe", wardrobeRoutes); // ✅ now it's correct position
-app.use("/api/admin", adminRoutes);
-app.use("/api/feedback", feedbackRoutes);
+// Routes
+app.use("/api/auth",      authRoutes);
+app.use("/api/clothing",  clothingRoutes);
+app.use("/api/wardrobe",  wardrobeRoutes);
+app.use("/api/admin",     adminRoutes);
+app.use("/api/feedback",  feedbackRoutes);
 
-// ✅ health check (VERY IMPORTANT FOR RENDER)
-app.get("/", (req, res) => {
-  res.send("Glamware Backend Running");
-});
+// Health check (required by Render)
+app.get("/", (_req, res) => res.send("Glamware Backend Running"));
 
-// ❗ IMPORTANT: use process.env.PORT
 const PORT = process.env.PORT || 5000;
 
 connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
