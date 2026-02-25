@@ -1,50 +1,21 @@
+// wardrobeRoutes.js — FIXED: removed duplicate handlers, uses controller throughout
 import express from "express";
-import { createWardrobe, getMyWardrobe } from "../controllers/wardrobeController.js";
+import {
+  createWardrobe,
+  deleteWardrobe,
+  getMyWardrobe,
+} from "../controllers/wardrobeController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
-import Wardrobe from "../models/Wardrobe.js";
 
 const router = express.Router();
 
-// ➤ Get User Wardrobe
-router.get("/", authMiddleware, async (req, res) => {
-  try {
-    const items = await Wardrobe.find({ userId: req.user.id });
-    res.json(items);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// ➤ Delete Item
-router.delete("/:id", authMiddleware, async (req, res) => {
-  try {
-    await Wardrobe.findByIdAndDelete(req.params.id);
-    res.json({ message: "Item deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-router.post("/", authMiddleware, async (req, res) => {
-  try {
-    const { imageUrl, category } = req.body;
-
-    const item = new Wardrobe({
-      imageUrl,
-      category,
-      userId: req.user.id,
-      status: "pending"
-    });
-
-    await item.save();
-
-    res.status(201).json(item);
-  } catch (error) {
-    res.status(500).json({ message: "Wardrobe upload failed" });
-  }
-});
-
-router.post("/", authMiddleware, createWardrobe);
+// ➤ GET  /api/wardrobe  — returns all items for the authenticated user
 router.get("/", authMiddleware, getMyWardrobe);
-export default router;
 
+// ➤ POST /api/wardrobe  — creates a new wardrobe item
+router.post("/", authMiddleware, createWardrobe);
+
+// ➤ DELETE /api/wardrobe/:id  — deletes a specific item (must belong to user)
+router.delete("/:id", authMiddleware, deleteWardrobe);
+
+export default router;

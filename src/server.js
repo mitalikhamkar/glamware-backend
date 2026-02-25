@@ -1,3 +1,4 @@
+//server.js
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
