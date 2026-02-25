@@ -1,4 +1,5 @@
 import express from "express";
+import { createWardrobe, getMyWardrobe } from "../controllers/wardrobeController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import Wardrobe from "../models/Wardrobe.js";
 
@@ -43,5 +44,7 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
+router.post("/", authMiddleware, createWardrobe);
+router.get("/", authMiddleware, getMyWardrobe);
 export default router;
 

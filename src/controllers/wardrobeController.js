@@ -1,43 +1,45 @@
-const Wardrobe = require("../models/Wardrobe");
+import Wardrobe from "../models/Wardrobe.js";
 
-// Create wardrobe item
-exports.createWardrobe = async (req, res) => {
+// ✅ Create wardrobe item
+export const createWardrobe = async (req, res) => {
   try {
-    const { category, type } = req.body;
-
-    if (!req.file) {
-      return res.status(400).json({ message: "Image is required" });
-    }
-
-    const newWardrobe = new Wardrobe({
-      user: req.user.id,
-      image: req.file.path,
+    const {
+      meshUri,
+      textureUri,
+      color,
+      materialMode,
+      clothingType,
       category,
-      type,
-      status: "pending"
+      size,
+      occasion,
+    } = req.body;
+
+    const wardrobeItem = await Wardrobe.create({
+      user: req.user.id, // from auth middleware
+      meshUri,
+      textureUri,
+      color,
+      materialMode,
+      clothingType,
+      category,
+      size,
+      occasion,
     });
 
-    await newWardrobe.save();
-
-    res.status(201).json({
-      message: "Wardrobe item created",
-      data: newWardrobe
-    });
-
+    res.status(201).json(wardrobeItem);
   } catch (error) {
-    console.error("Wardrobe error:", error);
+    console.error("Create wardrobe error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-// Get all wardrobe items (for admin moderation)
-exports.getAllWardrobe = async (req, res) => {
+// ✅ Get user's wardrobe
+export const getMyWardrobe = async (req, res) => {
   try {
-    const items = await Wardrobe.find().populate("user", "name email");
-
-    res.status(200).json(items);
+    const items = await Wardrobe.find({ user: req.user.id });
+    res.json(items);
   } catch (error) {
-    console.error("Fetch wardrobe error:", error);
+    console.error("Get wardrobe error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
